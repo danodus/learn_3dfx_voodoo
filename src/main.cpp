@@ -98,23 +98,50 @@ int main() {
     voodoo_w(backPorch, 33 << 16 | 48, 0xffffffff);
     voodoo_w(videoDimensions, 480 << 16 | 640, 0xffffffff);
 
-    // Enable RGB write and dithering
-    voodoo_w(fbzMode, (1 << 9) | (1 << 8), 0xffff);
+    voodoo_w(clipLeftRight, (0 << 16) | (640 << 0), 0xffffffff);
+    voodoo_w(clipLowYHighY, (0 << 16) | (480 << 0), 0xffffffff);
 
     float red[3] = {255.0f, 0.0f, 0.0f};
     float green[3] = {0.0f, 255.0f, 0.0f};
     float blue[3] = {0.0f, 0.0f, 255.0f};
 
-    draw_triangle(100.0f, 100.0f, 350.0f, 50.0f, 200.0f, 300.0f, red, green, blue);
-    draw_triangle(300.0f, 400.0f, 250.0f, 50.0f, 500.0f, 300.0f, red, green, blue);
+    float a[2] = {0.0f, 0.5f};
+    float b[2] = {-0.5f, -0.5f};
+    float c[2] = {0.5f, -0.5f};
 
-    // Swap buffers
-    voodoo_w(swapbufferCMD, 0, 0xffffffff);
+    float angle = 1.0f;
+    float scale = 100.0f;
+
+    float t[2] = {200.0f, 200.0f};
 
     bool quit = false;
     while(!quit) {
 
+        // RGB write back buffer
+        voodoo_w(fbzMode, (1 << 14) | (1 << 9), 0xffffffff);
+        // color1 for rgb
+        voodoo_w(fbzColorPath, (2 << 0), 0xffffffff);
+        voodoo_w(color1, 0xff000000, 0xffffffff);
+        // Clear the RGB buffer
+        voodoo_w(fastfillCMD, 0, 0xffffffff);
+
+        // RGB write back buffer + dithering
+        voodoo_w(fbzMode, (1 << 14) | (1 << 9) | (1 << 8), 0xffffffff);
+        // gouraud shading with subpixel correction
+        voodoo_w(fbzColorPath, (1 << 26) | (0 << 0), 0xffffffff);
+
+        draw_triangle(
+            (a[0] + cosf(angle)) * scale + t[0], (a[1] + sinf(angle)) * scale + t[1],
+            (b[0] + cosf(angle)) * scale + t[0], (b[1] + sinf(angle)) * scale + t[1],
+            (c[0] + cosf(angle)) * scale + t[0], (c[1] + sinf(angle)) * scale + t[1],
+            red, green, blue);
+
+        // Swap buffers
+        voodoo_w(swapbufferCMD, 0, 0xffffffff);
+
         SDL_RenderPresent(g_renderer);
+
+        angle += 0.01f;
 
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
