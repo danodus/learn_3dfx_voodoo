@@ -101,8 +101,12 @@ int main() {
     // Enable RGB write and dithering
     voodoo_w(fbzMode, (1 << 9) | (1 << 8), 0xffff);
 
-    draw_triangle(100.0f, 100.0f, 350.0f, 50.0f, 200.0f, 300.0f, (float[3]){255, 0, 0}, (float[3]){0, 255, 0}, (float[3]){0, 0, 255});
-    draw_triangle(300.0f, 400.0f, 250.0f, 50.0f, 500.0f, 300.0f, (float[3]){255, 0, 0}, (float[3]){0, 255, 0}, (float[3]){0, 0, 255});
+    float red[3] = {255.0f, 0.0f, 0.0f};
+    float green[3] = {0.0f, 255.0f, 0.0f};
+    float blue[3] = {0.0f, 0.0f, 255.0f};
+
+    draw_triangle(100.0f, 100.0f, 350.0f, 50.0f, 200.0f, 300.0f, red, green, blue);
+    draw_triangle(300.0f, 400.0f, 250.0f, 50.0f, 500.0f, 300.0f, red, green, blue);
 
     // Swap buffers
     voodoo_w(swapbufferCMD, 0, 0xffffffff);
