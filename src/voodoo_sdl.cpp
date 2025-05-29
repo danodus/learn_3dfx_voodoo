@@ -64,13 +64,11 @@ void voodoo_sdl_draw_buffer(voodoo_state *v) {
     UINT16 *drawbuf = (UINT16 *)(v->fbi.ram + v->fbi.rgboffs[v->fbi.backbuf]);
     for (int y = 0; y < v->fbi.height; y++)
         for (int x = 0; x < v->fbi.width; x++) {
-            if (*drawbuf) {
-                Uint8 r8 = ( (*drawbuf & 0x1F) * 527 + 23 ) >> 6;
-                Uint8 g8 = ( ((*drawbuf >> 5) & 0x3F) * 259 + 33 ) >> 6;
-                Uint8 b8 = ( ((*drawbuf >> 11) & 0x1F) * 527 + 23 ) >> 6;
-                SDL_SetRenderDrawColor(g_renderer, r8, g8, b8, 255);
-                SDL_RenderDrawPoint(g_renderer, x, y);
-            }
+            Uint8 r8 = ( ((*drawbuf >> 11) & 0x1F) * 527 + 23 ) >> 6;
+            Uint8 g8 = ( ((*drawbuf >> 5) & 0x3F) * 259 + 33 ) >> 6;
+            Uint8 b8 = ( (*drawbuf & 0x1F) * 527 + 23 ) >> 6;
+            SDL_SetRenderDrawColor(g_renderer, r8, g8, b8, 255);
+            SDL_RenderDrawPoint(g_renderer, x, y);
             drawbuf++;
         }
 }
